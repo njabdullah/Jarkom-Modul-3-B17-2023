@@ -39,6 +39,8 @@ Di Heiter
 
     service bind9 restart
 
+![Screenshot 2023-11-15 224945](https://github.com/njabdullah/Jarkom-Modul-3-B17-2023/assets/92930757/f931195d-3bb8-4ce6-abf2-fdbd589142b7)
+
 Testing Di Frieren
     
     echo nameserver 10.17.1.3 > /etc/resolv.conf
@@ -272,6 +274,11 @@ Di Revolte
     service apache2 start
     ab -n 1000 -c 100 http://www.granz.channel.b17.com/ 
 
+![Screenshot 2023-11-16 170210](https://github.com/njabdullah/Jarkom-Modul-3-B17-2023/assets/92930757/2861ebe1-2f7e-4d59-af89-95783a782660)
+
+![Screenshot 2023-11-16 170221](https://github.com/njabdullah/Jarkom-Modul-3-B17-2023/assets/92930757/eab0c912-6a9e-4677-901f-ffe29fa7f51d)
+
+
 ## Soal 8
 >Karena diminta untuk menuliskan grimoire, buatlah analisis hasil testing dengan 200 request dan 10 request/second masing-masing algoritma Load Balancer dengan ketentuan sebagai berikut:<br>
 a. Nama Algoritma Load Balancer<br>
@@ -327,6 +334,8 @@ Di Revolte
 
         lynx granz.channel.b17.com/its
 
+![Screenshot 2023-11-16 180513](https://github.com/njabdullah/Jarkom-Modul-3-B17-2023/assets/92930757/597960f4-b1d2-4422-a264-e19160dfedb9)
+
 ## Soal 12
 >Selanjutnya LB ini hanya boleh diakses oleh client dengan IP [Prefix IP].3.69, [Prefix IP].3.70, [Prefix IP].4.167, dan [Prefix IP].4.168. (12) hint: (fixed in dulu clinetnya)
 
@@ -344,6 +353,8 @@ Di Eisen
 Di Revolte
 
         lynx granz.channel.b17.com/its
+
+![Screenshot 2023-11-16 181457](https://github.com/njabdullah/Jarkom-Modul-3-B17-2023/assets/92930757/accfa107-daf4-4b92-9c8b-78ea4d446ad6)
 
 Terus kalau mau ngejalanin di Revolte gimana?<br>
 Di Revolte
