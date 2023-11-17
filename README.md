@@ -279,19 +279,114 @@ b. Report hasil testing pada Apache Benchmark<br>
 c. Grafik request per second untuk masing masing algoritma.<br> 
 d. Analisis<br>
 
-
-
 ## Soal 9
 >Dengan menggunakan algoritma Round Robin, lakukan testing dengan menggunakan 3 worker, 2 worker, dan 1 worker sebanyak 100 request dengan 10 request/second, kemudian tambahkan grafiknya pada grimoire. (9)
 
 ## Soal 10
->Selanjutnya coba tambahkan konfigurasi autentikasi di LB dengan dengan kombinasi username: “netics” dan password: “ajkyyy”, dengan yyy merupakan kode kelompok. Terakhir simpan file “htpasswd” nya di /etc/nginx/rahasisakita/ (10)
+>Selanjutnya coba tambahkan konfigurasi autentikasi di LB dengan dengan kombinasi username: “netics” dan password: “ajkyyy”, dengan yyy merupakan kode kelompok. Terakhir simpan file “htpasswd” nya di /etc/nginx/rahasisakita/
+
+Di Eisen
+
+        apt-get install apache2-utils -y
+        
+        mkdir /etc/nginx/rahasisakita
+        htpasswd -c /etc/nginx/rahasisakita/htpasswd netics
+        
+        ajkb17
+        
+        nano /etc/nginx/sites-available/lb-jarkom
+        
+        tambahkan ini
+        auth_basic "Restricted Content";
+        auth_basic_user_file /etc/nginx/rahasisakita/htpasswd;
+        
+        service nginx restart
+
+Di Revolte
+
+        lynx granz.channel.b17.com
+        
+        masukkan username netics
+        masukkan password b17
 
 ## Soal 11
 >Lalu buat untuk setiap request yang mengandung /its akan di proxy passing menuju halaman https://www.its.ac.id. (11) hint: (proxy_pass)
 
+Di Eisen
+
+        nano /etc/nginx/sites-available/lb-jarkom
+        
+        tambahkan
+        location ~* /its {
+        proxy_pass https://www.its.ac.id;
+        }
+        
+        service nginx restart
+
+Di Revolte
+
+        lynx granz.channel.b17.com/its
+
 ## Soal 12
 >Selanjutnya LB ini hanya boleh diakses oleh client dengan IP [Prefix IP].3.69, [Prefix IP].3.70, [Prefix IP].4.167, dan [Prefix IP].4.168. (12) hint: (fixed in dulu clinetnya)
+
+Di Eisen
+
+        nano /etc/nginx/sites-available/lb-jarkom
+
+        tambahkan
+        allow 10.17.3.69;
+                allow 10.17.3.70;
+                allow 10.17.4.167;
+                allow 10.17.4.168;
+                deny all;
+
+Di Revolte
+
+        lynx granz.channel.b17.com/its
+
+Terus kalau mau ngejalanin di Revolte gimana?<br>
+Di Revolte
+
+        ip a
+        (lalu cek dia di IP berapa, Fixed Addresskan IP ini di Heiter)
+        
+Di Himmel
+
+        nano /etc/dhcp/dhcpd.conf
+        
+        	host Revolte {
+            hardware ethernet (eth0 ip apa);
+            fixed-address 10.17.3.23;
+        }
+        
+        service isc-dhcp-server restart
+
+Di Revolte
+
+        nano /etc/network/interfaces
+        
+        tambahkan
+        auto eth0
+        iface eth0 inet dhcp
+        hwaddress ether (eth0 ip apa)
+
+Di Eisen
+
+        nano /etc/nginx/sites-available/lb-jarkom
+
+        tambahkan IP fixed address Revolte
+        allow 10.17.3.69;
+                allow 10.17.3.70;
+                allow 10.17.4.167;
+                allow 10.17.4.168;
+                allow IP fixed address Revolte;
+                deny all;
+
+Lalu lakukan test lagi di Revolte
+
+        lynx granz.channel.b17.com/its
+
 
 ## Soal 13
 >Semua data yang diperlukan, diatur pada Denken dan harus dapat diakses oleh Frieren, Flamme, dan Fern. (13)
