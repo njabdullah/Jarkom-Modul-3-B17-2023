@@ -286,6 +286,36 @@ b. Report hasil testing pada Apache Benchmark<br>
 c. Grafik request per second untuk masing masing algoritma.<br> 
 d. Analisis<br>
 
+Grafik request per second untuk masing masing algoritma
+![Screenshot 2023-11-18 010015](https://github.com/njabdullah/Jarkom-Modul-3-B17-2023/assets/92930757/af594523-256c-4142-b9ea-520fe616ca1e)
+
+Analisis
+
+        Analisis Algoritma Load Balancer<br>
+        
+        List Request per Second<br>
+        Round Robin		: 495.82 req/s<br> 
+        IP Hash		    : 669.21 req/s<br>
+        Least Connection: 833.41 req/s<br>
+        Generic Hash	: 992.10 req/s<br>
+        
+        Berdasarkan data request per second tersebut, berikut adalah analisis dari setiap algoritma load balancer:
+        
+        Round Robin<br>
+        Algoritma Round Robin mendistribusikan request secara berurutan ke setiap server yang tersedia dalam siklus tertentu. Dalam proses ini, setiap request akan dialokasikan ke server berikutnya dalam urutan yang telah ditentukan sebelumnya. Berdasarkan apa yang sudah kami jalankan, algoritma round robin menerima 495.82 request per second. Angka tersebut mengakibatkan algoritma Round Robin berkemungkinan menjadi load balancer yang paling baik dalam membagi request secara merata ke semua server.
+        
+        IP Hash<br>
+        Algoritma IP Hash mendistribusikan request ke server berdasarkan alamat IP dari klien yang melakukan request. Dalam hal ini, algoritma ini menggunakan informasi alamat IP sebagai kunci untuk menentukan server tujuan. Pada hasil kami, Algoritma IP hash memiliki rata-rata request per second yang cukup rendah, yaitu 669.21 request per second. Hal ini menjadikan algoritma IP hash sebagai algoritma yang dapat menyelesaikan request lebih cepat dibanding dengan algoritma lainnya.
+        
+        Least-Connection<br>
+        Algoritma Least Connection (Koneksi Terendah) mendistribusikan request ke server dengan cara memilih server yang saat itu memiliki jumlah koneksi aktif terendah. Ini berarti bahwa server dengan sedikit koneksi saat itu akan dipilih sebagai tujuan untuk request baru. Pada hasil kami, Algoritma least-connection memiliki rata-rata request per second yang paling tinggi kedua, yaitu 833.41 request per second. Hal ini menunjukkan bahwa algoritma least-connection harus menyelesaikan seluruh request tersebut dalam waktu tertentu.
+        
+        Generic Hash<br>
+        Tujuan utama dari Generic Hash adalah untuk mendistribusikan request secara merata dan konsisten ke server-server yang ada. Pada hasil kami, Algoritma generic hash memiliki rata-rata request per second yang paling tinggi, yaitu 992.10 request per second. Hal ini mengakibatkan algoritma generic hash membutuhkan waktu yang lebih lama dibanding dengan ketiga algoritma lainnya saat membagi request secara merata ke semua server.
+        
+        Kesimpulan<br>
+        Algoritma Round Robin merupakan pilihan terbaik dalam load balancing untuk mendistribusikan request secara merata ke semua server karena jumlah request per secondnya lebih kecil daripada ketiga algoritma lainnya. Algoritma IP Hash menjadi alternatif terbaik jika prioritasnya adalah mendistribusikan request ke server berdasarkan alamat IP dari klien yang melakukan request, menduduki posisi kedua yang efektif, diikuti oleh algoritma Least-Connection. Algoritma Generic Hash bisa digunakan untuk  mendistribusikan request secara merata dan konsisten ke server-server yang ada, Namun mungkin tidak optimal dalam memastikan pembagian request yang merata di antara semua server.
+
 ## Soal 9
 >Dengan menggunakan algoritma Round Robin, lakukan testing dengan menggunakan 3 worker, 2 worker, dan 1 worker sebanyak 100 request dengan 10 request/second, kemudian tambahkan grafiknya pada grimoire. (9)
 
