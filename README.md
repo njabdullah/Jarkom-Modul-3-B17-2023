@@ -72,11 +72,11 @@ a. POST /auth/register
 >Untuk memastikan ketiganya bekerja sama secara adil untuk mengatur Riegel Channel maka implementasikan Proxy Bind pada Eisen untuk mengaitkan IP dari Frieren, Flamme, dan Fern. (18)
 
 ## Soal 19
->Untuk meningkatkan performa dari Worker, coba implementasikan PHP-FPM pada Frieren, Flamme, dan Fern. Untuk testing kinerja naikkan<br> 
-- pm.max_children<br>
-- pm.start_servers<br>
-- pm.min_spare_servers<br>
-- pm.max_spare_servers<br>
+>Untuk meningkatkan performa dari Worker, coba implementasikan PHP-FPM pada Frieren, Flamme, dan Fern. Untuk testing kinerja naikkan<br>
+>pm.max_children<br>
+pm.start_servers<br>
+pm.min_spare_servers<br>
+pm.max_spare_servers<br>
 sebanyak tiga percobaan dan lakukan testing sebanyak 100 request dengan 10 request/second kemudian berikan hasil analisisnya pada Grimoire.(19)
 
 ## Soal 20
