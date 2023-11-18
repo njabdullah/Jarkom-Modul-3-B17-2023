@@ -434,20 +434,20 @@ Lalu lakukan test lagi di Revolte
 
 Pada Database Server dilakukan instalasi mysql terlebih dahulu dengan script berikut
 
-```
+```sh
 apt-get update
 apt-get install mariadb-server -y
 service mysql start
 ```
 Lalu ubah konfigurasi pada `/etc/mysql/mariadb.conf.d/50-server.cnf` menjadi 
 
-```
+```sh
 bind-address            = 0.0.0.0
 ```
 
 Lalu pada `/etc/mysql/my.cnf` ubah konfigurasi menjadi
 
-```conf
+```sh
 
 # This group is read both both by the client and the server
 # use it for options that affect everything
@@ -465,10 +465,12 @@ skip-bind-address
 
 Lalu lakukan script berikut untuk menambahkan user dan membuat table di mysql
 
-```
+```sh
 # Untuk login mysql terlebih dahulu
 mysql -u root -p
+```
 
+```sql
 # Query yang dilakukan
 CREATE USER 'kelompokb17'@'%' IDENTIFIED BY 'passwordb17';
 CREATE USER 'kelompokb17'@'localhost' IDENTIFIED BY 'passwordb17';
@@ -488,7 +490,7 @@ Lalu dapat dilihat akan muncul bahwa dari worker dapat mengakses dan database ya
 >Frieren, Flamme, dan Fern memiliki Riegel Channel sesuai dengan quest guide berikut. Jangan lupa melakukan instalasi PHP8.0 dan Composer (14)
 
 Untuk menyelesaikannya pada setiap worker lakukan instalasi sebagai berikut 
-```code
+```sh
 apt-get update
 apt-get install mariadb-client -y
 apt-get install lynx -y
@@ -504,9 +506,157 @@ service nginx start
 service php8.0-fpm start
 ```
 
+Lalu setelah melakukan instalasi requirement, lakukan instalasi composer juga dengan melakukan 
+```sh
+cd /root
+wget https://getcomposer.org/download/2.0.13/composer.phar
+chmod +x composer.phar
+cp composer.phar /usr/local/bin/composer
+```
+
+Lalu apabila sudah lakukan juga instalasi untuk git dan lakukan git clone repository pada ketentuan soal dan lakukan composer update
+
+```sh
+apt-get install git -y
+cd /var/www && git clone https://github.com/martuafernando/laravel-praktikum-jarkom
+cd /var/www/laravel-praktikum-jarkom && composer update
+```
+
+Lalu lakukan juga konfigurasi untuk `.env` pada masing masing worker dengan melakukan 
+```sh
+cd /var/www/laravel-praktikum-jarkom && cp .env.example .env
+```
+
+dan isikan konfigurasi berikut dengan mengisi konfigurasi database sesuai dengan ip milik kita
+
+```php
+APP_NAME=Laravel
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://localhost
+
+LOG_CHANNEL=stack
+LOG_DEPRECATIONS_CHANNEL=null
+LOG_LEVEL=debug
+
+DB_CONNECTION=mysql
+DB_HOST=10.17.2.1
+DB_PORT=3306
+DB_DATABASE=dbkelompokb17
+DB_USERNAME=kelompokb17
+DB_PASSWORD=passwordb17
+
+BROADCAST_DRIVER=log
+CACHE_DRIVER=file
+FILESYSTEM_DISK=local
+QUEUE_CONNECTION=sync
+SESSION_DRIVER=file
+SESSION_LIFETIME=120
+
+MEMCACHED_HOST=127.0.0.1
+
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+
+MAIL_MAILER=smtp
+MAIL_HOST=mailpit
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS="hello@example.com"
+MAIL_FROM_NAME="${APP_NAME}"
+
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=
+AWS_USE_PATH_STYLE_ENDPOINT=false
+
+PUSHER_APP_ID=
+PUSHER_APP_KEY=
+PUSHER_APP_SECRET=
+PUSHER_HOST=
+PUSHER_PORT=443
+PUSHER_SCHEME=https
+PUSHER_APP_CLUSTER=mt1
+
+VITE_PUSHER_APP_KEY="${PUSHER_APP_KEY}"
+VITE_PUSHER_HOST="${PUSHER_HOST}"
+VITE_PUSHER_PORT="${PUSHER_PORT}"
+VITE_PUSHER_SCHEME="${PUSHER_SCHEME}"
+VITE_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"
+```
+
+Lalu pada masing masing worker konfigurasi juga untuk `nginx` nya masing masing dengan mengisi script pada `/etc/nginx/sites-available/laravel-worker`
+
+```sh
+server {
+    listen <8001>;
+
+    root /var/www/laravel-praktikum-jarkom/public;
+
+    index index.php index.html index.htm;
+    server_name _;
+
+    location / {
+            try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    # pass PHP scripts to FastCGI server
+    location ~ \.php$ {
+      include snippets/fastcgi-php.conf;
+      fastcgi_pass unix:/var/run/php/php8.0-fpm.sock;
+    }
+
+    location ~ /\.ht {
+            deny all;
+    }
+
+    error_log /var/log/nginx/implementasi_error.log;
+    access_log /var/log/nginx/implementasi_access.log;
+}
+```
+
+sehingga dimana masing masing worker akan terbuka pada port masing masing yaitu `8001`
+```sh
+10.17.4.1:8001
+10.17.4.2:8001
+10.17.4.3:8001
+```
+
+Lalu lakukan percobaan dengan melakukan 
+
+```sh
+lynx localhost:8001
+```
+pada masing masing worker untuk mengetahui apakah konfigurasi sudah benar dan sudah berjalan
+
+![img14.1](/img/14.1.png)
+
 ## Soal 15
 >Riegel Channel memiliki beberapa endpoint yang harus ditesting sebanyak 100 request dengan 10 request/second. Tambahkan response dan hasil testing pada grimoire.<br>
 a. POST /auth/register
+
+Untuk melakukan testing pertama siapkan dahulu `register.json` nya yang digunakan untuk register. isikan script tersebut pada file `register.json`
+```sh
+cd /root && nano register.json
+
+{
+  "username": "kelompokb17",
+  "password": "passwordb17"
+} 
+```
+
+Lalu untuk melakukan benchmark lakukan script berikut pada client 
+```sh
+ab -n 100 -c 10 -p register.json -T application/json 10.17.2.2:8001/api/auth/register
+```
+
+lalu didapatkan hasil seperti berikut
+![img](/img/15.1.png)
 
 ## Soal 16
 >b. POST /auth/login
