@@ -432,8 +432,77 @@ Lalu lakukan test lagi di Revolte
 ## Soal 13
 >Semua data yang diperlukan, diatur pada Denken dan harus dapat diakses oleh Frieren, Flamme, dan Fern. (13)
 
+Pada Database Server dilakukan instalasi mysql terlebih dahulu dengan script berikut
+
+```
+apt-get update
+apt-get install mariadb-server -y
+service mysql start
+```
+Lalu ubah konfigurasi pada `/etc/mysql/mariadb.conf.d/50-server.cnf` menjadi 
+
+```
+bind-address            = 0.0.0.0
+```
+
+Lalu pada `/etc/mysql/my.cnf` ubah konfigurasi menjadi
+
+```conf
+
+# This group is read both both by the client and the server
+# use it for options that affect everything
+#
+[client-server]
+
+# Import all .cnf files from configuration directory
+!includedir /etc/mysql/conf.d/
+!includedir /etc/mysql/mariadb.conf.d/
+
+[mysqld]
+skip-networking=0
+skip-bind-address
+```
+
+Lalu lakukan script berikut untuk menambahkan user dan membuat table di mysql
+
+```
+# Untuk login mysql terlebih dahulu
+mysql -u root -p
+
+# Query yang dilakukan
+CREATE USER 'kelompokb17'@'%' IDENTIFIED BY 'passwordb17';
+CREATE USER 'kelompokb17'@'localhost' IDENTIFIED BY 'passwordb17';
+CREATE DATABASE dbkelompokb17;
+GRANT ALL PRIVILEGES ON *.* TO 'kelompokb17'@'%';
+GRANT ALL PRIVILEGES ON *.* TO 'kelompokb17'@'localhost';
+FLUSH PRIVILEGES;
+```
+
+Lalu dari salah satu worker coba untuk mengakses database dengan melakukan 
+```sql
+mariadb --host=10.17.2.1 --port=3306 --user=kelompokb17 --password=passwordb17 dbkelompokb17 -e "SHOW DATABASES;"
+```
+Lalu dapat dilihat akan muncul bahwa dari worker dapat mengakses dan database yang sudah dibuat sudah ada
+![img2](/img/13.1.png)
 ## Soal 14
 >Frieren, Flamme, dan Fern memiliki Riegel Channel sesuai dengan quest guide berikut. Jangan lupa melakukan instalasi PHP8.0 dan Composer (14)
+
+Untuk menyelesaikannya pada setiap worker lakukan instalasi sebagai berikut 
+```code
+apt-get update
+apt-get install mariadb-client -y
+apt-get install lynx -y
+apt-get install -y lsb-release ca-certificates apt-transport-https software-properties-common gnupg2
+curl -sSLo /usr/share/keyrings/deb.sury.org-php.gpg https://packages.sury.org/php/apt.gpg
+sh -c 'echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
+apt-get install php8.0-mbstring php8.0-xml php8.0-cli   php8.0-common php8.0-intl php8.0-opcache php8.0-readline php8.0-mysql php8.0-fpm php8.0-curl unzip wget -y
+apt-get update
+apt-get install php8.0-mbstring php8.0-xml php8.0-cli   php8.0-common php8.0-intl php8.0-opcache php8.0-readline php8.0-mysql php8.0-fpm php8.0-curl unzip wget -y
+apt-get install nginx -y
+
+service nginx start
+service php8.0-fpm start
+```
 
 ## Soal 15
 >Riegel Channel memiliki beberapa endpoint yang harus ditesting sebanyak 100 request dengan 10 request/second. Tambahkan response dan hasil testing pada grimoire.<br>
