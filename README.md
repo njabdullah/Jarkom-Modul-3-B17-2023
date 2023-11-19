@@ -278,11 +278,6 @@ Di Revolte
     service apache2 start
     ab -n 1000 -c 100 http://www.granz.channel.b17.com/ 
 
-![Screenshot 2023-11-16 170210](https://github.com/njabdullah/Jarkom-Modul-3-B17-2023/assets/92930757/2861ebe1-2f7e-4d59-af89-95783a782660)
-
-![Screenshot 2023-11-16 170221](https://github.com/njabdullah/Jarkom-Modul-3-B17-2023/assets/92930757/eab0c912-6a9e-4677-901f-ffe29fa7f51d)
-
-
 ## Soal 8
 >Karena diminta untuk menuliskan grimoire, buatlah analisis hasil testing dengan 200 request dan 10 request/second masing-masing algoritma Load Balancer dengan ketentuan sebagai berikut:<br>
 a. Nama Algoritma Load Balancer<br>
