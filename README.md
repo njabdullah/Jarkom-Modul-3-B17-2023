@@ -186,9 +186,9 @@ Di PHP Worker (Lawine, Linie, Lugner)
     apt-get install wget
     apt-get install unzip
     
-    wget --no-check-certificate 'https://drive.usercontent.google.com/download?id=1ViSkRq7SmwZgdK64eRbr5Fm1EGCTPrU1&export=download&authuser=0&confirm=t&uuid=0e499712-8150-42d4-a474-b29dfb026ab6&at=APZUnTVBse4ducwDDntmAkLSWB1_:1699949521984' -O  granz.channel.a17.com
+    wget --no-check-certificate 'https://drive.usercontent.google.com/download?id=1ViSkRq7SmwZgdK64eRbr5Fm1EGCTPrU1&export=download&authuser=0&confirm=t&uuid=0e499712-8150-42d4-a474-b29dfb026ab6&at=APZUnTVBse4ducwDDntmAkLSWB1_:1699949521984' -O  granz.channel.b17.com
     
-    unzip granz.channel.a17.com
+    unzip granz.channel.b17.com
     
     cp -r modul-3/ /var/www
 
