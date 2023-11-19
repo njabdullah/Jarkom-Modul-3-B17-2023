@@ -527,7 +527,7 @@ Lalu lakukan juga konfigurasi untuk `.env` pada masing masing worker dengan mela
 cd /var/www/laravel-praktikum-jarkom && cp .env.example .env
 ```
 
-dan isikan konfigurasi berikut dengan mengisi konfigurasi database sesuai dengan ip milik kita
+dan isikan konfigurasi berikut dengan mengisi konfigurasi database sesuai dengan konfigurasi database kita
 
 ```php
 APP_NAME=Laravel
@@ -590,6 +590,18 @@ VITE_PUSHER_SCHEME="${PUSHER_SCHEME}"
 VITE_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"
 ```
 
+Setelah itu lakukan script berikut untuk file laravelnya
+```sh
+cd /var/www/laravel-praktikum-jarkom && php artisan key:generate
+cd /var/www/laravel-praktikum-jarkom && php artisan config:cache
+cd /var/www/laravel-praktikum-jarkom && php artisan migrate
+cd /var/www/laravel-praktikum-jarkom && php artisan db:seed
+cd /var/www/laravel-praktikum-jarkom && php artisan storage:link
+cd /var/www/laravel-praktikum-jarkom && php artisan jwt:secret
+cd /var/www/laravel-praktikum-jarkom && php artisan config:clear
+chown -R www-data.www-data /var/www/laravel-praktikum-jarkom/storage
+```
+
 Lalu pada masing masing worker konfigurasi juga untuk `nginx` nya masing masing dengan mengisi script pada `/etc/nginx/sites-available/laravel-worker`
 
 ```sh
@@ -627,6 +639,13 @@ sehingga dimana masing masing worker akan terbuka pada port masing masing yaitu 
 10.17.4.3:8001
 ```
 
+Lalu apabila konfigurasi sudah lakukan ini pada worker
+
+```sh
+service php8.0-fpm restart
+service nginx restart
+```
+
 Lalu lakukan percobaan dengan melakukan 
 
 ```sh
@@ -652,7 +671,7 @@ cd /root && nano register.json
 
 Lalu untuk melakukan benchmark lakukan script berikut pada client 
 ```sh
-ab -n 100 -c 10 -p register.json -T application/json 10.17.2.2:8001/api/auth/register
+ab -n 100 -c 10 -p register.json -T application/json 10.17.4.2:8001/api/auth/register
 ```
 
 lalu didapatkan hasil seperti berikut
@@ -661,11 +680,71 @@ lalu didapatkan hasil seperti berikut
 ## Soal 16
 >b. POST /auth/login
 
+Untuk melakukan testing pertama siapkan dahulu `login.json` nya yang digunakan untuk register. isikan script tersebut pada file `login.json`
+
+```sh
+cd /root && nano login.json
+
+{
+  "username": "kelompokb17",
+  "password": "passwordb17"
+} 
+```
+
+Lalu untuk melakukan benchmark lakukan script berikut pada client 
+```sh
+ab -n 100 -c 10 -p login.json -T application/json 10.17.4.2:8001/api/auth/login
+```
+![img](/img/16.1.png)
 ## Soal 17
 >c. GET /me
+Dalam menyelesaikan ini pertama kita dapatkan terlebih dahulu token untuk login dengan script berikut
 
+```sh
+curl -X POST -H "Content-Type: application/json" -d @login.json http://10.17.4.1:8001/api/auth/login > login_output.txt
+```
+lalu akan didapatkan tampilan seperti ini
+![img](/img/17.1.png)
+
+Lalu jalankan perintah berikut untuk melakukan set `token` secara global
+```sh
+token=$(cat login_output.txt | jq -r '.token')
+```
+Setelah itu jalankan perintah berikut untuk melakukan testing
+
+```
+ab -n 100 -c 10 -H "Authorization: Bearer $token" http://10.17.4.1:8001/api/me
+```
+Lalu didapatkan hasil sebagai berikut
+![img](/img/17.2.png)
 ## Soal 18
 >Untuk memastikan ketiganya bekerja sama secara adil untuk mengatur Riegel Channel maka implementasikan Proxy Bind pada Eisen untuk mengaitkan IP dari Frieren, Flamme, dan Fern. (18)
+
+Pada permasalahan ini untuk mengatur bekerja sama secara adil maka akan dibuatkan load balancer untuk worker laravel. Sehingga pada node `Load Balancer` buat konfigurasi baru untuk load balancer untuk laravel dengan mengisi konfigurasi dengan `nano /etc/nginx/sites-available/lb-laravel` dengan mengisi
+
+```sh
+upstream worker {
+    server 10.17.4.1:8001;
+    server 10.17.4.2:8001;
+    server 10.17.4.3:8001;
+}
+
+server {
+    listen 8001;
+    server_name 10.17.2.2 riegel.canyon.b17.com www.riegel.canyon.b17.com;
+
+    location / {
+        proxy_pass http://worker;
+    }
+}
+```
+Karena pada load balancer juga terdapat load balancer untuk php worker, maka port akan dibedakan yaitu untuk laravel berada pada port `8001`
+
+Lalu untuk melakukan testing, lakukan pada salah satu client dengan script berikut 
+
+```sh
+ab -n 100 -c 10 -p login.json -T application/json 10.17.2.2:8001/api/auth/login
+```
 
 ## Soal 19
 >Untuk meningkatkan performa dari Worker, coba implementasikan PHP-FPM pada Frieren, Flamme, dan Fern. Untuk testing kinerja naikkan<br>
@@ -675,5 +754,115 @@ pm.min_spare_servers<br>
 pm.max_spare_servers<br>
 sebanyak tiga percobaan dan lakukan testing sebanyak 100 request dengan 10 request/second kemudian berikan hasil analisisnya pada Grimoire.(19)
 
+`pm.max_children`This is the maximum number of child processes that will be created to process PHP requests. This setting is crucial for managing the memory usage of your server. If it's set too high, you might exhaust your server's memory.
+
+`pm.start_servers`This directive sets the number of child processes created on startup. As the number of processes pre-forked, this setting can help your server handle incoming requests faster than it would if it had to spawn new processes when a request comes in.
+
+`pm.min_spare_servers`This directive sets the desired minimum number of idle (spare) server processes. If there are fewer than this number of idle processes, PHP-FPM will fork additional processes.
+
+`pm.max_spare_servers` This directive sets the desired maximum number of idle (spare) server processes. If there are more than this number of idle processes, PHP-FPM will kill off the excess processes.
+
+Pada permasalahan ini, lakukan konfigurasi pada `/etc/php/8.0/fpm/pool.d/www.conf` untuk mengganti
+```
+pm.max_children
+pm.start_servers
+pm.min_spare_servers
+pm.max_spare_servers
+```
+
+Pada script awal akan terdapat
+```sh
+[www]
+user = www-data
+group = www-data
+listen = /run/php/php8.0-fpm.sock
+listen.owner = www-data
+listen.group = www-data
+pm = dynamic
+pm.max_children = 5
+pm.start_servers = 2
+pm.min_spare_servers = 1
+pm.max_spare_servers = 3
+```
+
+lalu gantikan dengan script-script berikut sesuai dengan ketentuan soal
+```sh
+# Script 1
+
+[www]
+user = www-data
+group = www-data
+listen = /run/php/php8.0-fpm.sock
+listen.owner = www-data
+listen.group = www-data
+pm = dynamic
+pm.max_children = 25
+pm.start_servers = 5
+pm.min_spare_servers = 3
+pm.max_spare_servers = 10
+```
+
+```sh
+# Script 2
+
+[www]
+user = www-data
+group = www-data
+listen = /run/php/php8.0-fpm.sock
+listen.owner = www-data
+listen.group = www-data
+pm = dynamic
+pm.max_children = 50
+pm.start_servers = 8
+pm.min_spare_servers = 5
+pm.max_spare_servers = 15
+```
+
+```sh
+# Script 3
+
+[www]
+user = www-data
+group = www-data
+listen = /run/php/php8.0-fpm.sock
+listen.owner = www-data
+listen.group = www-data
+pm = dynamic
+pm.max_children = 75
+pm.start_servers = 10
+pm.min_spare_servers = 5
+pm.max_spare_servers = 20
+```
+
+
 ## Soal 20
 >Nampaknya hanya menggunakan PHP-FPM tidak cukup untuk meningkatkan performa dari worker maka implementasikan Least-Conn pada Eisen. Untuk testing kinerja dari worker tersebut dilakukan sebanyak 100 request dengan 10 request/second. (20)
+
+Pada permasalahan ini kita mengganti algoritma load balancer untuk `laravel worker` pada node `load balancer` sehingga menjadi seperti ini pada `/etc/nginx/sites-enabled/lb-laravel`
+
+```sh
+upstream worker {
+    least_conn;
+    server 10.17.4.1:8001;
+    server 10.17.4.2:8001;
+    server 10.17.4.3:8001;
+}
+
+server {
+    listen 8001;
+    server_name 10.17.2.2 riegel.canyon.b17.com www.riegel.canyon.b17.com;
+
+    location / {
+        proxy_bind 10.17.2.2;
+        proxy_pass http://worker;
+    }
+}
+```
+
+lalu untuk melakukan testing gunakan script berikut
+```sh
+ab -n 100 -c 10 -p login.json -T application/json 10.17.2.2:8001/api/auth/login
+```
+
+Lalu didapatkan hasil sebagai berikut
+![img](/img/20.1.png)
