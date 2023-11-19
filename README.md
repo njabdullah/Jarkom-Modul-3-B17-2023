@@ -45,10 +45,14 @@ Testing Di Frieren
     echo nameserver 10.17.1.3 > /etc/resolv.conf
   	ping riegel.canyon.b17.com
 
+![Screenshot 2023-11-19 185403](https://github.com/njabdullah/Jarkom-Modul-3-B17-2023/assets/92930757/685f5811-e69f-4a69-8961-aab59bb65259)
+
 Testing Di Lawine
   
     echo nameserver 10.17.1.3 > /etc/resolv.conf
   	ping granz.channel.b17.com
+
+![Screenshot 2023-11-19 185329](https://github.com/njabdullah/Jarkom-Modul-3-B17-2023/assets/92930757/3b8a9fb1-97f6-4ee6-947e-2b405b62164c)
 
 ## Soal 2
 >Client yang melalui Switch3 mendapatkan range IP dari [prefix IP].3.16 - [prefix IP].3.32 dan [prefix IP].3.64 - [prefix IP].3.80 (2)
