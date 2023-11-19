@@ -259,7 +259,7 @@ Di Eisen
 
     server {
             listen 80;
-            server_name granz.channel.a17.com;
+            server_name granz.channel.b17.com;
             location / {
             proxy_pass http://myweb;
             }
