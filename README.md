@@ -31,11 +31,11 @@ Di Heiter
 
     nano /etc/bind/jarkom/riegel.canyon.b17.com
     ganti nama
-    ganti ip (10.17.4.4) // IP Frieren
+    ganti ip (10.17.4.1) // IP Frieren
 
     nano /etc/bind/jarkom/granz.channel.b17.com
     ganti nama
-    ganti ip (10.17.3.4) // IP Lawine
+    ganti ip (10.17.3.1) // IP Lawine
 
     service bind9 restart
 
@@ -243,11 +243,12 @@ Di Eisen
     nano /etc/nginx/sites-available/lb-jarkom
      
     Tambahkan
-    upstream myweb {
-           server 10.17.3.4;
-           server 10.17.3.5;
-           server 10.17.3.6;
+    upstream myweb  {
+        server 10.17.3.1 weight=4; #Lawine
+        server 10.17.3.2 weight=2; #Linie
+        server 10.17.3.3 weight=1; #Lugner
     }
+
 
     server {
             listen 80;
@@ -317,7 +318,7 @@ Analisis
         Algoritma Round Robin merupakan pilihan terbaik dalam load balancing untuk mendistribusikan request secara merata ke semua server karena jumlah request per secondnya lebih kecil daripada ketiga algoritma lainnya. Algoritma IP Hash menjadi alternatif terbaik jika prioritasnya adalah mendistribusikan request ke server berdasarkan alamat IP dari klien yang melakukan request, menduduki posisi kedua yang efektif, diikuti oleh algoritma Least-Connection. Algoritma Generic Hash bisa digunakan untuk  mendistribusikan request secara merata dan konsisten ke server-server yang ada, Namun mungkin tidak optimal dalam memastikan pembagian request yang merata di antara semua server.
 
 ## Soal 9
->Dengan menggunakan algoritma Round Robin, lakukan testing dengan menggunakan 3 worker, 2 worker, dan 1 worker sebanyak 100 request dengan 10 request/second, kemudian tambahkan grafiknya pada grimoire. (9)
+>Dengan menggunakan algoritma Round Robin, lakukan testing dengan menggunakan 3 worker, 2 worker, dan 1 worker sebanyak 100 request dengan 10 request/second, kemudian tambahkan grafiknya pada grimoire.
 
 ## Soal 10
 >Selanjutnya coba tambahkan konfigurasi autentikasi di LB dengan dengan kombinasi username: “netics” dan password: “ajkyyy”, dengan yyy merupakan kode kelompok. Terakhir simpan file “htpasswd” nya di /etc/nginx/rahasisakita/
