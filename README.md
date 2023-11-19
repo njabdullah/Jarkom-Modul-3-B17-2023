@@ -7,6 +7,7 @@
 | Abdullah Nasih Jasir       | 5025211111 |
 
 ## Topology
+![Screenshot 2023-11-19 184036](https://github.com/njabdullah/Jarkom-Modul-3-B17-2023/assets/92930757/48cacbc5-7f30-441e-ac93-90c0650f00e2)
 
 ## Soal 1
 >Lakukan konfigurasi sesuai dengan peta yang sudah diberikan.
@@ -38,8 +39,6 @@ Di Heiter
     ganti ip (10.17.3.1) // IP Lawine
 
     service bind9 restart
-
-![Screenshot 2023-11-15 224945](https://github.com/njabdullah/Jarkom-Modul-3-B17-2023/assets/92930757/f931195d-3bb8-4ce6-abf2-fdbd589142b7)
 
 Testing Di Frieren
     
@@ -77,6 +76,8 @@ Di Himmel
         default-lease-time 180;
         max-lease-time 5760;
     }
+    
+![Screenshot 2023-11-19 184742](https://github.com/njabdullah/Jarkom-Modul-3-B17-2023/assets/92930757/9df29690-2c81-4ad1-9227-539c30d5b2ec)
 
 ## Soal 3
 >Client yang melalui Switch4 mendapatkan range IP dari [prefix IP].4.12 - [prefix IP].4.20 dan [prefix IP].4.160 - [prefix IP].4.168 (3)
@@ -98,6 +99,8 @@ Di Himmel
 
     service isc-dhcp-server restart
     service isc-dhcp-server status
+
+![Screenshot 2023-11-19 184644](https://github.com/njabdullah/Jarkom-Modul-3-B17-2023/assets/92930757/7a07b85d-0e04-4088-937e-4120ea4bb108)
 
 ## Soal 4
 >Client mendapatkan DNS dari Heiter dan dapat terhubung dengan internet melalui DNS tersebut (4)
@@ -287,6 +290,12 @@ b. Report hasil testing pada Apache Benchmark<br>
 c. Grafik request per second untuk masing masing algoritma.<br> 
 d. Analisis<br>
 
+Berikut adalah hasil testing pada Apache Benchmark
+![Screenshot 2023-11-19 184516](https://github.com/njabdullah/Jarkom-Modul-3-B17-2023/assets/92930757/514ff69e-cc4d-4b8c-b967-86f7d68323ad)
+![Screenshot 2023-11-19 184507](https://github.com/njabdullah/Jarkom-Modul-3-B17-2023/assets/92930757/cdf7e488-077c-44ba-b4c0-513f81852e09)
+![Screenshot 2023-11-19 184458](https://github.com/njabdullah/Jarkom-Modul-3-B17-2023/assets/92930757/888a88bc-053c-4680-bb89-feb2375b6d66)
+![Screenshot 2023-11-19 184450](https://github.com/njabdullah/Jarkom-Modul-3-B17-2023/assets/92930757/34b06a1c-c8ed-4434-985b-8c481b1c5ae8)
+
 Grafik request per second untuk masing masing algoritma
 ![Screenshot 2023-11-18 010015](https://github.com/njabdullah/Jarkom-Modul-3-B17-2023/assets/92930757/af594523-256c-4142-b9ea-520fe616ca1e)
 
@@ -319,6 +328,13 @@ Analisis
 
 ## Soal 9
 >Dengan menggunakan algoritma Round Robin, lakukan testing dengan menggunakan 3 worker, 2 worker, dan 1 worker sebanyak 100 request dengan 10 request/second, kemudian tambahkan grafiknya pada grimoire.
+
+![Screenshot 2023-11-19 184322](https://github.com/njabdullah/Jarkom-Modul-3-B17-2023/assets/92930757/8ec21532-c20d-4684-be0e-722bac1c5286)
+
+        Analisa : Karena worker yang bekerja untuk load balancer semakin sedikit mengakibatkan Request per Secondnya akan meningkat karena semakin sedikit worker maka semakin sedikit pula CPU yang menangani banyaknya client yang melakukan request
+        
+        Kesimpulan : Maka apabila worker semakin sedikit berpengaruh terhadap performa yang semakin menurun
+
 
 ## Soal 10
 >Selanjutnya coba tambahkan konfigurasi autentikasi di LB dengan dengan kombinasi username: “netics” dan password: “ajkyyy”, dengan yyy merupakan kode kelompok. Terakhir simpan file “htpasswd” nya di /etc/nginx/rahasisakita/
